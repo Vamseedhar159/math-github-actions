@@ -38,7 +38,7 @@ jobs:
           git config user.email "actions@github.com"
           git add release.log
           git commit -m "Auto-deploy update" || echo "No changes to commit"
-          git push origin main || echo "Push done"
+          git push origin main && echo "Push done"
           echo "Deploy done ✅"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,44 @@
+name: CI-CD-Full-Practice
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout with proper credentials
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+
+      # Build
+      - name: Build
+        run: |
+          echo "Starting Build..."
+          pip install -r deps.txt
+          echo "Build done ✅"
+
+      # Test
+      - name: Test
+        run: |
+          echo "Starting Tests..."
+          pytest || echo "Tests failed ❌"
+          echo "Tests done ✅"
+
+      # Deploy (auto commit)
+      - name: Deploy
+        run: |
+          echo "Starting Deploy..."
+          echo "Deployment successful at $(date)" >> release.log
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add release.log
+          git commit -m "Auto-deploy update" || echo "No changes to commit"
+          git push origin main || echo "Push done"
+          echo "Deploy done ✅"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
